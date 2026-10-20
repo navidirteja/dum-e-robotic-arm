@@ -4,7 +4,7 @@ A from-scratch robotic arm built on **ROS 2**, driven by an **ESP32** with hobby
 
 > **Status:** 🚧 Work in progress. Robot description complete and audited; motion planning and hardware integration are next. See the [roadmap](#roadmap) and the [engineering log](docs/engineering-log.md).
 
-<!-- TODO: add an RViz2 screenshot here once captured: docs/images/rviz_zero_pose.png -->
+![Dum-E in RViz2, reaching down to the table](docs/images/rviz_pick_pose.png)
 
 ---
 

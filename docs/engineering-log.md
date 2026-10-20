@@ -92,6 +92,8 @@ A sweep of table targets with the gripper pointing down found **no reachable poi
 - `CMakeLists.txt` installs `urdf/`, `launch/` and `rviz/` into the package's share directory, which is where the launch file reads them from after a build.
 - `display.launch.py` passes the robot model through `xacro` (a plain URDF passes through unchanged), so it already works for the Phase 3 xacro file. A `gui:=false` argument replaces the sliders with a publisher that holds every joint at zero.
 - The RViz config opens with `base_link` as the fixed frame, the robot model, and TF axes with frame names.
+- Built with colcon and launched on the laptop (2026-10-21). RViz2 shows the 5-DOF arm; the table-pick pose from kinematics.md (shoulder 94°, elbow 86°) puts the tool at table level, as predicted.
+- Built with colcon and launched on the laptop (2026-10-21). RViz2 shows the 5-DOF arm; the table-pick pose from kinematics.md (shoulder 94°, elbow 86°) puts the tool at table level, as predicted.
 
 ### Reflection
 <!-- TODO: in your own words. e.g. what you learned about how colcon discovers packages and why files are installed before they are used. -->
