@@ -69,7 +69,7 @@ Developed on Ubuntu 24.04 LTS (dual-boot) with ROS 2 Jazzy Jalisco.
 ```bash
 # one-time: put the repository inside your workspace's src/ folder
 mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
-git clone https://github.com/<your-username>/dum-e-robotic-arm.git
+git clone https://github.com/navidirteja/dum-e-robotic-arm.git
 
 # install dependencies declared in package.xml, then build
 cd ~/ros2_ws
