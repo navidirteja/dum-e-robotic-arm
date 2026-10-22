@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!--
+  Dum-E : 5-DOF reference arm (ADR-007, option C)
+    J1 base_yaw_joint       yaw   (Z)
+    J2 shoulder_pitch_joint pitch (Y)
+    J3 elbow_pitch_joint    pitch (Y)
+    J4 wrist_pitch_joint    pitch (Y)
+    J5 wrist_roll_joint     roll  (Z, along the tool axis)
+
+  Conventions: REP-103 (X forward, Y left, Z up; meters, radians, kg).
+  Zero pose: arm straight up. Every joint origin has rpy="0 0 0", so at q = 0
+  every frame is aligned with base_link (ADR-002).
+
+  Placeholders (marked TODO): masses/inertias, effort and velocity limits.
+  Replace with CAD / scale / datasheet values once motors are chosen.
+-->
+<robot name="dum_e" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- ===== Dimensions(m). Change sizes here only. ===== -->
+<xacro:property name="base_plate_length" value="0.05"/>
+<xacro:property name="base_plate_radius" value="0.1"/>
+
+<xacro:property name="column_length" value="0.3"/>
+<xacro:property name="column_radius" value="0.04"/>
+
+<xacro:property name="upper_arm_length" value="0.3"/>
+<xacro:property name="upper_arm_radius" value="0.03"/>
+
+<xacro:property name="forearm_length" value="0.2"/>
+<xacro:property name="forearm_radius" value="0.02"/>
+
+<xacro:property name="wrist_bracket_size_x" value="0.04"/>
+<xacro:property name="wrist_bracket_size_y" value="0.04"/>
+<xacro:property name="wrist_bracket_length" value="0.06"/>
+
+<xacro:property name="mount_size_x" value="0.05"/>
+<xacro:property name="mount_size_y" value="0.05"/>
+<xacro:property name="mount_length" value="0.05"/>
+
+  <!-- ===== Materials ===== -->
+  <material name="blue">   <color rgba="0 0 1 1"/>          </material>
+  <material name="orange"> <color rgba="1 0.5 0 1"/>        </material>
+  <material name="silver"> <color rgba="0.75 0.75 0.75 1"/> </material>
+  <material name="yellow"> <color rgba="1 1 0 1"/>          </material>
+  <material name="green">  <color rgba="0 0.7 0.3 1"/>      </material>
+  <material name="red">    <color rgba="1 0 0 1"/>          </material>
+
+  <!-- ===== base_link: base plate. Origin = bottom-centre (mounting surface, ADR-004).
+       No inertial: fixed to the world (ADR-006). ===== -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 ${base_plate_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${base_plate_length}" radius="${base_plate_radius}"/></geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${base_plate_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${base_plate_length}" radius="${base_plate_radius}"/></geometry>
+    </collision>
+  </link>
+
+  <!-- ===== J1: base yaw. Positive = counter-clockwise seen from above. ===== -->
+  <joint name="base_yaw_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0 0 ${base_plate_length}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="2.0" velocity="1.0"/>  <!-- TODO: stepper datasheet -->
+  </joint>
+
+  <!-- ===== shoulder_link: rotating column ===== -->
+  <link name="shoulder_link">
+    <visual>
+      <origin xyz="0 0 ${column_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${column_length}" radius="${column_radius}"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${column_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${column_length}" radius="${column_radius}"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${column_length / 2}" rpy="0 0 0"/>
+      <mass value="0.40"/>  <!-- TODO: real mass -->
+      <inertia ixx="0.003160" ixy="0" ixz="0" iyy="0.003160" iyz="0" izz="0.000320"/>
+    </inertial>
+  </link>
+
+  <!-- ===== J2: shoulder pitch. Positive tips the arm toward +X. ===== -->
+  <joint name="shoulder_pitch_joint" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="upper_arm_link"/>
+    <origin xyz="0 0 ${column_length}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.0944" upper="2.0944" effort="4.0" velocity="1.0"/>  <!-- +/-120 deg, see kinematics.md section 6. TODO: geared NEMA 17 -->
+  </joint>
+
+  <!-- ===== upper_arm_link ===== -->
+  <link name="upper_arm_link">
+    <visual>
+      <origin xyz="0 0 ${upper_arm_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${upper_arm_length}" radius="${upper_arm_radius}"/></geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${upper_arm_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${upper_arm_length}" radius="${upper_arm_radius}"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${upper_arm_length / 2}" rpy="0 0 0"/>
+      <mass value="0.25"/>  <!-- TODO: real mass -->
+      <inertia ixx="0.001931" ixy="0" ixz="0" iyy="0.001931" iyz="0" izz="0.000112"/>
+    </inertial>
+  </link>
+
+  <!-- ===== J3: elbow pitch ===== -->
+  <joint name="elbow_pitch_joint" type="revolute">
+    <parent link="upper_arm_link"/>
+    <child link="forearm_link"/>
+    <origin xyz="0 0 ${upper_arm_length}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.3562" upper="2.3562" effort="2.0" velocity="1.0"/>  <!-- +/-135 deg, see kinematics.md section 6 -->
+  </joint>
+
+  <!-- ===== forearm_link ===== -->
+  <link name="forearm_link">
+    <visual>
+      <origin xyz="0 0 ${forearm_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${forearm_length}" radius="${forearm_radius}"/></geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${forearm_length / 2}" rpy="0 0 0"/>
+      <geometry><cylinder length="${forearm_length}" radius="${forearm_radius}"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${forearm_length / 2}" rpy="0 0 0"/>
+      <mass value="0.15"/>  <!-- TODO: real mass -->
+      <inertia ixx="0.000515" ixy="0" ixz="0" iyy="0.000515" iyz="0" izz="0.000030"/>
+    </inertial>
+  </link>
+
+  <!-- ===== J4: wrist pitch (sets the approach angle). Servo: 180 deg range. ===== -->
+  <joint name="wrist_pitch_joint" type="revolute">
+    <parent link="forearm_link"/>
+    <child link="wrist_pitch_link"/>
+    <origin xyz="0 0 ${forearm_length}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="1.0" velocity="3.0"/>  <!-- TODO: servo datasheet -->
+  </joint>
+
+  <!-- ===== wrist_pitch_link: short bracket between the two wrist servos ===== -->
+  <link name="wrist_pitch_link">
+    <visual>
+      <origin xyz="0 0 ${wrist_bracket_length / 2}" rpy="0 0 0"/>
+      <geometry><box size="${wrist_bracket_size_x} ${wrist_bracket_size_y} ${wrist_bracket_length}"/></geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${wrist_bracket_length / 2}" rpy="0 0 0"/>
+      <geometry><box size="${wrist_bracket_size_x} ${wrist_bracket_size_y} ${wrist_bracket_length}"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${wrist_bracket_length / 2}" rpy="0 0 0"/>
+      <mass value="0.06"/>  <!-- TODO: real mass -->
+      <inertia ixx="0.000026" ixy="0" ixz="0" iyy="0.000026" iyz="0" izz="0.000016"/>
+    </inertial>
+  </link>
+
+  <!-- ===== J5: wrist roll, about the tool's own axis (local Z). Servo: 180 deg range. ===== -->
+  <joint name="wrist_roll_joint" type="revolute">
+    <parent link="wrist_pitch_link"/>
+    <child link="wrist_roll_link"/>
+    <origin xyz="0 0 ${wrist_bracket_length}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708" effort="0.5" velocity="3.0"/>  <!-- TODO: servo datasheet -->
+  </joint>
+
+  <!-- ===== wrist_roll_link: tool mount ===== -->
+  <link name="wrist_roll_link">
+    <visual>
+      <origin xyz="0 0 ${mount_length / 2}" rpy="0 0 0"/>
+      <geometry><box size="${mount_size_x} ${mount_size_y} ${mount_length}"/></geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${mount_length / 2}" rpy="0 0 0"/>
+      <geometry><box size="${mount_size_x} ${mount_size_y} ${mount_length}"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${mount_length / 2}" rpy="0 0 0"/>
+      <mass value="0.08"/>  <!-- TODO: real mass -->
+      <inertia ixx="0.000033" ixy="0" ixz="0" iyy="0.000033" iyz="0" izz="0.000033"/>
+    </inertial>
+  </link>
+
+  <!-- ===== tool0: planning tip on the tool-mount face (ADR-005).
+       Move to the fingertip centre when a gripper is added. ===== -->
+  <joint name="tool0_joint" type="fixed">
+    <parent link="wrist_roll_link"/>
+    <child link="tool0"/>
+    <origin xyz="0 0 ${mount_length}" rpy="0 0 0"/>
+  </joint>
+  <link name="tool0"/>
+
+</robot>
