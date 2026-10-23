@@ -26,9 +26,11 @@
 
   <xacro:property name="upper_arm_length" value="0.3"/>
   <xacro:property name="upper_arm_radius" value="0.03"/>
+  <xacro:property name="upper_arm_mass"   value="0.25"/>   <!-- TODO: real mass -->
 
   <xacro:property name="forearm_length" value="0.2"/>
   <xacro:property name="forearm_radius" value="0.02"/>
+  <xacro:property name="forearm_mass"   value="0.15"/>   <!-- TODO: real mass -->
 
   <xacro:property name="wrist_bracket_size_x" value="0.04"/>
   <xacro:property name="wrist_bracket_size_y" value="0.04"/>
@@ -114,11 +116,7 @@
       <origin xyz="0 0 ${upper_arm_length / 2}" rpy="0 0 0"/>
       <geometry><cylinder length="${upper_arm_length}" radius="${upper_arm_radius}"/></geometry>
     </collision>
-    <inertial>
-      <origin xyz="0 0 ${upper_arm_length / 2}" rpy="0 0 0"/>
-      <mass value="0.25"/>  <!-- TODO: real mass -->
-      <inertia ixx="0.001931" ixy="0" ixz="0" iyy="0.001931" iyz="0" izz="0.000112"/>
-    </inertial>
+    <xacro:cylinder_inertial mass="${upper_arm_mass}" radius="${upper_arm_radius}" length="${upper_arm_length}"/>
   </link>
 
   <!-- ===== J3: elbow pitch ===== -->
@@ -141,11 +139,7 @@
       <origin xyz="0 0 ${forearm_length / 2}" rpy="0 0 0"/>
       <geometry><cylinder length="${forearm_length}" radius="${forearm_radius}"/></geometry>
     </collision>
-    <inertial>
-      <origin xyz="0 0 ${forearm_length / 2}" rpy="0 0 0"/>
-      <mass value="0.15"/>  <!-- TODO: real mass -->
-      <inertia ixx="0.000515" ixy="0" ixz="0" iyy="0.000515" iyz="0" izz="0.000030"/>
-    </inertial>
+    <xacro:cylinder_inertial mass="${forearm_mass}" radius="${forearm_radius}" length="${forearm_length}"/>
   </link>
 
   <!-- ===== J4: wrist pitch (sets the approach angle). Servo: 180 deg range. ===== -->
