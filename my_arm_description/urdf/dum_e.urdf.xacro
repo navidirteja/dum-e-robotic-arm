@@ -22,6 +22,7 @@
 
   <xacro:property name="column_length" value="0.3"/>
   <xacro:property name="column_radius" value="0.04"/>
+  <xacro:property name="column_mass"   value="0.40"/>   <!-- TODO: real mass -->
 
   <xacro:property name="upper_arm_length" value="0.3"/>
   <xacro:property name="upper_arm_radius" value="0.03"/>
@@ -81,8 +82,11 @@
     </collision>
     <inertial>
       <origin xyz="0 0 ${column_length / 2}" rpy="0 0 0"/>
-      <mass value="0.40"/>  <!-- TODO: real mass -->
-      <inertia ixx="0.003160" ixy="0" ixz="0" iyy="0.003160" iyz="0" izz="0.000320"/>
+      <mass value="${column_mass}"/>
+      <!-- Solid cylinder about its centre: Ixx = Iyy = m(3r^2 + l^2)/12, Izz = m r^2/2 -->
+      <inertia ixx="${column_mass * (3 * column_radius**2 + column_length**2) / 12}" ixy="0" ixz="0"
+               iyy="${column_mass * (3 * column_radius**2 + column_length**2) / 12}" iyz="0"
+               izz="${column_mass * column_radius**2 / 2}"/>
     </inertial>
   </link>
 
