@@ -37,6 +37,17 @@
   <xacro:property name="mount_size_x" value="0.05"/>
   <xacro:property name="mount_size_y" value="0.05"/>
   <xacro:property name="mount_length" value="0.05"/>
+  
+  <xacro:macro name="cylinder_inertial" params="mass radius length">
+  <inertial>
+      <origin xyz="0 0 ${length / 2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <!-- Solid cylinder about its centre: Ixx = Iyy = m(3r^2 + l^2)/12, Izz = m r^2/2 -->
+      <inertia ixx="${mass * (3 * radius**2 + length**2) / 12}" ixy="0" ixz="0"
+               iyy="${mass * (3 * radius**2 + length**2) / 12}" iyz="0"
+               izz="${mass * radius**2 / 2}"/>
+    </inertial>
+  </xacro:macro>
 
   <!-- ===== Materials ===== -->
   <material name="blue">   <color rgba="0 0 1 1"/>          </material>
@@ -80,14 +91,7 @@
       <origin xyz="0 0 ${column_length / 2}" rpy="0 0 0"/>
       <geometry><cylinder length="${column_length}" radius="${column_radius}"/></geometry>
     </collision>
-    <inertial>
-      <origin xyz="0 0 ${column_length / 2}" rpy="0 0 0"/>
-      <mass value="${column_mass}"/>
-      <!-- Solid cylinder about its centre: Ixx = Iyy = m(3r^2 + l^2)/12, Izz = m r^2/2 -->
-      <inertia ixx="${column_mass * (3 * column_radius**2 + column_length**2) / 12}" ixy="0" ixz="0"
-               iyy="${column_mass * (3 * column_radius**2 + column_length**2) / 12}" iyz="0"
-               izz="${column_mass * column_radius**2 / 2}"/>
-    </inertial>
+    <xacro:cylinder_inertial mass="${column_mass}" radius="${column_radius}" length="${column_length}"/>
   </link>
 
   <!-- ===== J2: shoulder pitch. Positive tips the arm toward +X. ===== -->
