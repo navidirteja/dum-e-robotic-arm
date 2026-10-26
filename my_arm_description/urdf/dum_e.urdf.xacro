@@ -35,10 +35,12 @@
   <xacro:property name="wrist_bracket_size_x" value="0.04"/>
   <xacro:property name="wrist_bracket_size_y" value="0.04"/>
   <xacro:property name="wrist_bracket_length" value="0.06"/>
+  <xacro:property name="wrist_bracket_mass" value="0.06"/>   <!-- TODO: real mass -->
 
   <xacro:property name="mount_size_x" value="0.05"/>
   <xacro:property name="mount_size_y" value="0.05"/>
   <xacro:property name="mount_length" value="0.05"/>
+  <xacro:property name="mount_mass"         value="0.08"/>   <!-- TODO: real mass -->
   
   <xacro:macro name="cylinder_inertial" params="mass radius length">
   <inertial>
@@ -48,6 +50,17 @@
       <inertia ixx="${mass * (3 * radius**2 + length**2) / 12}" ixy="0" ixz="0"
                iyy="${mass * (3 * radius**2 + length**2) / 12}" iyz="0"
                izz="${mass * radius**2 / 2}"/>
+    </inertial>
+  </xacro:macro>
+  
+  <xacro:macro name="box_inertial" params="mass x y z">
+  <inertial>
+      <origin xyz="0 0 ${z / 2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <!-- Solid box about its centre: Ixx = m × (y² + z²) / 12, Iyy = m × (x² + z²) / 12, Izz = m × (x² + y²) / 12 -->
+      <inertia ixx="${mass * (y**2 + z**2) / 12}" ixy="0" ixz="0"
+               iyy="${mass * (x**2 + z**2) / 12}" iyz="0"
+               izz="${mass * (x**2 + y**2) / 12}"/>
     </inertial>
   </xacro:macro>
 
@@ -162,11 +175,7 @@
       <origin xyz="0 0 ${wrist_bracket_length / 2}" rpy="0 0 0"/>
       <geometry><box size="${wrist_bracket_size_x} ${wrist_bracket_size_y} ${wrist_bracket_length}"/></geometry>
     </collision>
-    <inertial>
-      <origin xyz="0 0 ${wrist_bracket_length / 2}" rpy="0 0 0"/>
-      <mass value="0.06"/>  <!-- TODO: real mass -->
-      <inertia ixx="0.000026" ixy="0" ixz="0" iyy="0.000026" iyz="0" izz="0.000016"/>
-    </inertial>
+    <xacro:box_inertial mass="${wrist_bracket_mass}" x="${wrist_bracket_size_x}" y="${wrist_bracket_size_y}" z="${wrist_bracket_length}"/>
   </link>
 
   <!-- ===== J5: wrist roll, about the tool's own axis (local Z). Servo: 180 deg range. ===== -->
@@ -189,11 +198,7 @@
       <origin xyz="0 0 ${mount_length / 2}" rpy="0 0 0"/>
       <geometry><box size="${mount_size_x} ${mount_size_y} ${mount_length}"/></geometry>
     </collision>
-    <inertial>
-      <origin xyz="0 0 ${mount_length / 2}" rpy="0 0 0"/>
-      <mass value="0.08"/>  <!-- TODO: real mass -->
-      <inertia ixx="0.000033" ixy="0" ixz="0" iyy="0.000033" iyz="0" izz="0.000033"/>
-    </inertial>
+    <xacro:box_inertial mass="${mount_mass}" x="${mount_size_x}" y="${mount_size_y}" z="${mount_length}"/>
   </link>
 
   <!-- ===== tool0: planning tip on the tool-mount face (ADR-005).
