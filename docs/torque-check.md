@@ -36,7 +36,7 @@ Gripper parts and payload assumed at 0.63–0.66.
 | Tool mount (printed) | 0.05 | Estimate |
 | Gripper servo (MG90S) | 0.0134 | Datasheet |
 | Gripper body (printed) | 0.06 | Guess, 40–80 g range |
-| Payload | 0.20 | Working assumption, pending CEO |
+| Payload | 0.20 | Working assumption, pending decision |
 
 ## 4. Results (200 g payload)
 
@@ -119,7 +119,7 @@ A fixed (non-modular) arm could keep its motors near the base and drive the join
 - **Gear strength is unknown.** It is not yet known whether printed gear teeth survive ~25:1 at the shoulder; a fit-test print has to confirm this.
 - **Gearbox efficiency (0.7) is an assumption** until a gearbox is designed and tested.
 - **Gripping force is not checked.**
-- **The payload (200 g) is pending** the CEO's decision.
+- **The payload (200 g) is pending** Sanzim bhai's decision.
 
 ## Sources
 - NEMA 17 masses and torques: [Hanpose 17HS series catalog](https://baa.vn/document/17hs-series-hanpose-dong-co-buoc-2-pha-lai-6877-catalog1.pdf)
