@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Dum-E jog
+        </title>
+        <script src="https://cdn.jsdelivr.net/npm/roslib@1.4.1/build/roslib.min.js"></script>
+    </head>
+    <body>
+        <h1>Dum-E jog</h1>
+        <p>Status: <span id="status">connecting...</span></p>
+
+        <script>
+            const statusText = document.getElementById("status");
+
+            const ros = new ROSLIB.Ros({
+                url: "ws://" + window.location.hostname + ":9090"
+            });
+
+            ros.on("connection", () => { statusText.textContent = "connected"; });
+            ros.on("error",      () => { statusText.textContent = "error";});
+            ros.on("close",      () => { statusText.textContent = "closed"});
+        </script>
+    </body>
+</html>
