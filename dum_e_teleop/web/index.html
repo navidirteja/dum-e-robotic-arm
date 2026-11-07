@@ -10,6 +10,7 @@
     <body>
         <h1>Dum-E jog</h1>
         <p>Status: <span id="status">connecting...</span></p>
+        <button id="test-button">Send one jog</button>
 
         <script>
             const statusText = document.getElementById("status");
@@ -21,6 +22,20 @@
             ros.on("connection", () => { statusText.textContent = "connected"; });
             ros.on("error",      () => { statusText.textContent = "error";});
             ros.on("close",      () => { statusText.textContent = "closed"});
+
+            const jogTopic = new ROSLIB.Topic({
+                ros: ros,
+                name: "/joint_jog",
+                messageType: "control_msgs/msg/JointJog"
+            });
+
+            const testButton = document.getElementById("test-button");
+            testButton.addEventListener("click", () => {
+                jogTopic.publish({
+                    joint_names: ["elbow_pitch"],
+                    velocities: [0.3]
+                });
+            });
         </script>
     </body>
 </html>
