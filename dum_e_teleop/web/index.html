@@ -32,7 +32,7 @@
             const testButton = document.getElementById("test-button");
             testButton.addEventListener("click", () => {
                 jogTopic.publish({
-                    joint_names: ["elbow_pitch"],
+                    joint_names: ["elbow_pitch_joint"],
                     velocities: [0.3]
                 });
             });
