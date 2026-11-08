@@ -23,7 +23,7 @@ setup(
         ],
     },
     entry_points={
-        'console_scripts': [
+        'console_scripts': ['jog_node = dum_e_teleop.jog_node:main'
         ],
     },
 )
