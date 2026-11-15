@@ -13,6 +13,15 @@ JOINT_NAMES = [
 
 DT = 0.02
 
+# Joint limits in radians, copied from my_arm.urdf. Keep them in sync!
+LIMITS = {
+    "base_yaw_joint": (-3.14159, 3.14159),
+    "shoulder_pitch_joint": (-2.0944, 2.0944),
+    "elbow_pitch_joint": (-2.3562, 2.3562),
+    "wrist_pitch_joint": (-1.5708, 1.5708),
+    "wrist_roll_joint": (-1.5708, 15708),
+}
+
 
 class JogNode(Node):
     def __init__(self):
@@ -37,6 +46,13 @@ class JogNode(Node):
     def on_tick(self):
         for name in JOINT_NAMES:
             self.angles[name] = self.angles[name] + self.speeds[name] * DT
+
+            lower, upper = LIMITS[name]
+            if self.angles[name] > upper:
+                self.angles[name] = upper
+
+            if self.angles[name] < lower:
+                self.angles[name] = lower
 
         positions = []
         for name in JOINT_NAMES:
