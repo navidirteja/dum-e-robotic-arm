@@ -12,6 +12,7 @@ JOINT_NAMES = [
 ]
 
 DT = 0.02
+TIMEOUT = 0.5
 
 # Joint limits in radians, copied from my_arm.urdf. Keep them in sync!
 LIMITS = {
@@ -31,11 +32,13 @@ class JogNode(Node):
         for name in JOINT_NAMES:
             self.speeds[name] = 0.0
             self.angles[name] = 0.0
+        self.last_jog_time = self.get_clock().now().nanoseconds / 1e9
         self.create_subscription(JointJog, "joint_jog", self.on_jog, 10)
         self.publisher = self.create_publisher(JointState, "joint_states", 10)
         self.create_timer(DT, self.on_tick)
 
     def on_jog(self, msg):
+        self.last_jog_time = self.get_clock().now().nanoseconds / 1e9
         for name, speed in zip(msg.joint_names, msg.velocities):
             if name in self.speeds:
                 self.speeds[name] = speed 
@@ -44,6 +47,10 @@ class JogNode(Node):
         self.get_logger().info(f"speeds: {self.speeds}")
 
     def on_tick(self):
+        now = self.get_clock().now().nanoseconds / 1e9
+        if now - self.last_jog_time > TIMEOUT:
+            for name in JOINT_NAMES:
+                self.speeds[name] = 0.0
         for name in JOINT_NAMES:
             self.angles[name] = self.angles[name] + self.speeds[name] * DT
 
