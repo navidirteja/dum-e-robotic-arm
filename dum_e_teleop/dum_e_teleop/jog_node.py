@@ -19,7 +19,7 @@ LIMITS = {
     "shoulder_pitch_joint": (-2.0944, 2.0944),
     "elbow_pitch_joint": (-2.3562, 2.3562),
     "wrist_pitch_joint": (-1.5708, 1.5708),
-    "wrist_roll_joint": (-1.5708, 15708),
+    "wrist_roll_joint": (-1.5708, 1.5708),
 }
 
 
