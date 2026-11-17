@@ -30,4 +30,13 @@ def generate_launch_description():
             arguments=["-d", rviz_config],
             output="screen",
         ),
+        Node(
+            package="rosbridge_server",
+            executable="rosbridge_websocket",
+            output="screen",
+        ),
+        Node(
+            package="rosapi",
+            executable="rosapi_node",
+        ),
     ])
