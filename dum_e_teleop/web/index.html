@@ -11,6 +11,7 @@
         <h1>Dum-E jog</h1>
         <p>Status: <span id="status">connecting...</span></p>
         <button id="test-button">Send one jog</button>
+        <button id="elbow-plus">Elbow +</button>
 
         <script>
             const statusText = document.getElementById("status");
@@ -35,6 +36,25 @@
                     joint_names: ["elbow_pitch_joint"],
                     velocities: [0.3]
                 });
+            });
+
+            // ---- hold-to-move: elbow + ----
+            const elbowPlus = document.getElementById("elbow-plus");
+            let holdTimer = null;
+
+            const sendElbowPlus = () => {
+                jogTopic.publish({
+                    joint_names: ["elbow_pitch_joint"],
+                    velocities: [0.3]
+                });
+            };
+
+            elbowPlus.addEventListener("pointerdown", () => {
+                holdTimer = setInterval(sendElbowPlus, 100);
+            });
+
+            elbowPlus.addEventListener("pointerup", () => {
+                clearInterval(holdTimer);
             });
         </script>
     </body>
