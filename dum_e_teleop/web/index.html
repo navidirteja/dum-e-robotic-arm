@@ -49,13 +49,15 @@
                 });
             };
 
-            elbowPlus.addEventListener("pointerdown", () => {
-                holdTimer = setInterval(sendElbowPlus, 100);
-            });
-
             const stopHold = () => {
                 clearInterval(holdTimer);
             };
+
+            elbowPlus.addEventListener("pointerdown", () => {
+                stopHold();
+                holdTimer = setInterval(sendElbowPlus, 100);
+            });
+
             
             elbowPlus.addEventListener("pointerup", stopHold);
             elbowPlus.addEventListener("pointerleave", stopHold);
