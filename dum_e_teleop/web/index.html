@@ -53,9 +53,13 @@
                 holdTimer = setInterval(sendElbowPlus, 100);
             });
 
-            elbowPlus.addEventListener("pointerup", () => {
+            const stopHold = () => {
                 clearInterval(holdTimer);
-            });
+            };
+            
+            elbowPlus.addEventListener("pointerup", stopHold);
+            elbowPlus.addEventListener("pointerleave", stopHold);
+            elbowPlus.addEventListener("pointercancel", stopHold);
         </script>
     </body>
 </html>
