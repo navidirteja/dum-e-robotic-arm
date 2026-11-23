@@ -17,8 +17,7 @@
         <h1>Dum-E jog</h1>
         <p>Status: <span id="status">connecting...</span></p>
         <button id="test-button">Send one jog</button>
-        <button id="elbow-plus">Elbow +</button>
-        <button id="elbow-minus">Elbow -</button>
+        <div id="joint-buttons"></div>
 
         <script>
             const statusText = document.getElementById("status");
@@ -71,8 +70,34 @@
                 button.addEventListener("pointercancel", stopHold);
             };
 
-            makeHoldButton("elbow-plus", "elbow_pitch_joint", 0.3);
-            makeHoldButton("elbow-minus", "elbow_pitch_joint", -0.3);
+            const JOINTS = [
+                {name: "base_yaw_joint", label: "Base"},
+                {name: "shoulder_pitch_joint", label: "Shoulder"},
+                {name: "elbow_pitch_joint", label: "Elbow"},
+                {name: "wrist_pitch_joint", label: "Wrist pitch"},
+                {name: "wrist_roll_joint", label: "Wrist roll"},
+            ];
+
+            const jointButtons = document.getElementById("joint-buttons");
+
+            for (const joint of JOINTS) {
+                const row = document.createElement("div");
+
+                const plus = document.createElement("button");
+                plus.id = joint.name + "-plus";
+                plus.textContent = joint.label + " +";
+                row.appendChild(plus);
+
+                const minus = document.createElement("button");
+                minus.id = joint.name + "-minus";
+                minus.textContent = joint.label + " -";
+                row.appendChild(minus);
+
+                jointButtons.appendChild(row);
+
+                makeHoldButton(plus.id, joint.name, 0.3);
+                makeHoldButton(minus.id, joint.name, -0.3);
+            }
 
         </script>
     </body>
