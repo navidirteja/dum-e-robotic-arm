@@ -18,6 +18,7 @@
         <p>Status: <span id="status">connecting...</span></p>
         <button id="test-button">Send one jog</button>
         <button id="elbow-plus">Elbow +</button>
+        <button id="elbow-minus">Elbow -</button>
 
         <script>
             const statusText = document.getElementById("status");
@@ -44,14 +45,22 @@
                 });
             });
 
-            // ---- hold-to-move: elbow + ----
+            // ---- hold-to-move: elbow + and - ----
             const elbowPlus = document.getElementById("elbow-plus");
+            const elbowMinus = document.getElementById("elbow-minus");
             let holdTimer = null;
 
             const sendElbowPlus = () => {
                 jogTopic.publish({
                     joint_names: ["elbow_pitch_joint"],
                     velocities: [0.3]
+                });
+            };
+
+            const sendElbowMinus = () => {
+                jogTopic.publish({
+                    joint_names: ["elbow_pitch_joint"],
+                    velocities: [-0.3]
                 });
             };
 
@@ -63,11 +72,17 @@
                 stopHold();
                 holdTimer = setInterval(sendElbowPlus, 100);
             });
-
-            
             elbowPlus.addEventListener("pointerup", stopHold);
             elbowPlus.addEventListener("pointerleave", stopHold);
             elbowPlus.addEventListener("pointercancel", stopHold);
+
+            elbowMinus.addEventListener("pointerdown", () => {
+                stopHold();
+                holdTimer = setInterval(sendElbowMinus, 100);
+            });
+            elbowMinus.addEventListener("pointerup", stopHold);
+            elbowMinus.addEventListener("pointerleave", stopHold);
+            elbowMinus.addEventListener("pointercancel", stopHold);
         </script>
     </body>
 </html>
