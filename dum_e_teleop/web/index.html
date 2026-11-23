@@ -45,44 +45,35 @@
                 });
             });
 
-            // ---- hold-to-move: elbow + and - ----
-            const elbowPlus = document.getElementById("elbow-plus");
-            const elbowMinus = document.getElementById("elbow-minus");
+            // ---- hold-to-move ----
             let holdTimer = null;
-
-            const sendElbowPlus = () => {
-                jogTopic.publish({
-                    joint_names: ["elbow_pitch_joint"],
-                    velocities: [0.3]
-                });
-            };
-
-            const sendElbowMinus = () => {
-                jogTopic.publish({
-                    joint_names: ["elbow_pitch_joint"],
-                    velocities: [-0.3]
-                });
-            };
 
             const stopHold = () => {
                 clearInterval(holdTimer);
             };
 
-            elbowPlus.addEventListener("pointerdown", () => {
-                stopHold();
-                holdTimer = setInterval(sendElbowPlus, 100);
-            });
-            elbowPlus.addEventListener("pointerup", stopHold);
-            elbowPlus.addEventListener("pointerleave", stopHold);
-            elbowPlus.addEventListener("pointercancel", stopHold);
+            const makeHoldButton = (buttonId, jointName, speed) => {
+                const button = document.getElementById(buttonId);
 
-            elbowMinus.addEventListener("pointerdown", () => {
-                stopHold();
-                holdTimer = setInterval(sendElbowMinus, 100);
-            });
-            elbowMinus.addEventListener("pointerup", stopHold);
-            elbowMinus.addEventListener("pointerleave", stopHold);
-            elbowMinus.addEventListener("pointercancel", stopHold);
+                const send = () => {
+                    jogTopic.publish({
+                        joint_names: [jointName],
+                        velocities: [speed]
+                    });
+                };
+
+                button.addEventListener("pointerdown", () => {
+                    stopHold();
+                    holdTimer = setInterval(send, 100);
+                });
+                button.addEventListener("pointerup", stopHold);
+                button.addEventListener("pointerleave", stopHold);
+                button.addEventListener("pointercancel", stopHold);
+            };
+
+            makeHoldButton("elbow-plus", "elbow_pitch_joint", 0.3);
+            makeHoldButton("elbow-minus", "elbow_pitch_joint", -0.3);
+
         </script>
     </body>
 </html>
