@@ -3,13 +3,40 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Dum-E jog
-        </title>
+        <title>Dum-E jog</title>
         <script src="https://cdn.jsdelivr.net/npm/roslib@1.4.1/build/roslib.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
         <style>
+            body {
+                background: #f2f2f2;
+                color: #111111;
+                font-family: "Inter", sans-serif;
+                margin: 24px;
+            }
+            h1 {
+                font-family: "Space Grotesk", sans-serif;
+                font-weight: 700;
+                font-size: 56px;
+                line-height: 0.85;
+                letter-spacing: -0.05em;
+                text-transform: uppercase;
+                margin: 16px 0;
+            }
+            .grey {
+                color: #6b6b6b;
+            }
+            .eyebrow {
+                display: inline-block;
+                border: 2px solid #111111;
+                padding: 4px 10px;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+            }
             button {
                 touch-action: none;
                 user-select: none;
+                font-family: inherit;
                 font-size: 20px;
                 padding: 16px 24px;
                 margin: 6px;
@@ -17,9 +44,9 @@
         </style>
     </head>
     <body>
-        <h1>Dum-E jog</h1>
+        <div class="eyebrow">■ JOG_CONSOLE</div>
+        <h1>Dum-E<br><span class="grey">Jog console</span></h1>
         <p>Status: <span id="status">connecting...</span></p>
-        <button id="test-button">Send one jog</button>
         <div id="joint-buttons"></div>
 
         <script>
@@ -37,14 +64,6 @@
                 ros: ros,
                 name: "/joint_jog",
                 messageType: "control_msgs/msg/JointJog"
-            });
-
-            const testButton = document.getElementById("test-button");
-            testButton.addEventListener("click", () => {
-                jogTopic.publish({
-                    joint_names: ["elbow_pitch_joint"],
-                    velocities: [0.3]
-                });
             });
 
             // ---- hold-to-move ----
