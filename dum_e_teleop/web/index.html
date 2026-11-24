@@ -33,6 +33,17 @@
                 font-weight: 600;
                 letter-spacing: 0.1em;
             }
+            .status {
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+            }
+            .online {
+                color: #1a7f37;
+            }
+            .offline {
+                color: #c62828;
+            }
             .card {
                 border: 1px solid #cfcfcf;
                 margin: 8px 0;
@@ -80,7 +91,7 @@
     <body>
         <div class="eyebrow">■ JOG_CONSOLE</div>
         <h1>Dum-E<br><span class="grey">Jog console</span></h1>
-        <p>Status: <span id="status">connecting...</span></p>
+        <p class="status">SYS.STATUS: <span id="status">■ CONNECTING</span></p>
         <div id="joint-buttons"></div>
 
         <script>
@@ -90,9 +101,14 @@
                 url: "ws://" + window.location.hostname + ":9090"
             });
 
-            ros.on("connection", () => { statusText.textContent = "connected"; });
-            ros.on("error",      () => { statusText.textContent = "error";});
-            ros.on("close",      () => { statusText.textContent = "closed"});
+            const setStatus = (text, className) => {
+                statusText.textContent = text;
+                statusText.className = className;
+            };
+
+            ros.on("connection", () => setStatus("■ ONLINE", "online"));
+            ros.on("error",      () => setStatus("■ ERROR", "offline"));
+            ros.on("close",      () => setStatus("■ OFFLINE", "offline"));
 
             const jogTopic = new ROSLIB.Topic({
                 ros: ros,
